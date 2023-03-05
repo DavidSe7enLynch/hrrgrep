@@ -6,7 +6,7 @@ fn main() {
     Builder::new().parse_filters("debug").init();
 
     let args: Vec<String> = env::args().collect();
-    let config = parse_args(&args);
+    let config = Config::new(&args);
 
     info!("searching for {} in file {}", config.query, config.file);
 
@@ -18,9 +18,12 @@ struct Config {
     file: String,
 }
 
-fn parse_args(args: &Vec<String>) -> Config {
-    Config {
-        query: args[1].to_string(),
-        file: args[2].to_string(),
+impl Config {
+    fn new(args: &[String]) -> Config {
+        Config {
+            query: args[1].clone(),
+            file: args[2].to_string(),
+        }
     }
 }
+
