@@ -1,8 +1,13 @@
 use std::error::Error;
 use std::fs;
 
+use log::info;
+
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.file)?;
+    for line in search(&config.query, &content) {
+        info!("{line}");
+    }
     Ok(())
 }
 
@@ -23,17 +28,15 @@ impl Config {
     }
 }
 
-fn search<'a> (query: &str, contents: &'a str) -> Vec<&'a str> {
+fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
     let mut result = vec![];
-    for line in contents.lines() {
+    for line in content.lines() {
         if line.contains(query) {
             result.push(line);
         }
     }
     result
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -42,12 +45,12 @@ mod tests {
     #[test]
     fn one_result() {
         let query = "32";
-        let contents = "\
+        let content = "\
 abcd
 ef
  few32 qw
 g";
-        println!("{}", contents);
-        assert_eq!(vec![" few32 qw"], search(query, contents));
+        println!("{}", content);
+        assert_eq!(vec![" few32 qw"], search(query, content));
     }
 }

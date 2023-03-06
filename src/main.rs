@@ -1,7 +1,7 @@
 use env_logger::Builder;
+use hrrgrep::Config;
 use log::{error, info};
 use std::{env, process};
-use hrrgrep::Config;
 
 fn main() {
     Builder::new().parse_filters("debug").init();
@@ -19,5 +19,3 @@ fn main() {
         process::exit(1);
     }
 }
-
-
