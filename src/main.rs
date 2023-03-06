@@ -1,5 +1,6 @@
 use env_logger::Builder;
 use log::{error, info};
+use std::error::Error;
 use std::{env, fs, process};
 
 fn main() {
@@ -13,7 +14,12 @@ fn main() {
 
     info!("searching for {} in file {}", config.query, config.file);
 
+    run(config);
+}
+
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.file).expect("read file fail");
+    Ok(())
 }
 
 struct Config {
