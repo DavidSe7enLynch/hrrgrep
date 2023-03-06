@@ -38,19 +38,42 @@ fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
     result
 }
 
+fn search_case_insensitive<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
+    let mut result = vec![];
+    for line in content.lines() {
+        if line.contains(query) {
+            result.push(line);
+        }
+    }
+    result
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn one_result() {
-        let query = "32";
+    fn case_sensitive() {
+        let query = "duct";
         let content = "\
-abcd
-ef
- few32 qw
-g";
+Rust:
+safe, fast, productive.
+Pick three.
+Duct tape.";
         println!("{}", content);
-        assert_eq!(vec![" few32 qw"], search(query, content));
+        assert_eq!(vec!["safe, fast, productive."], search(query, content));
+    }
+
+    #[test]
+    fn case_insensitive() {
+        let query = "rUsT";
+        let content = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+        println!("{}", content);
+        assert_eq!(vec!["Rust:", "Trust me."], search_case_insensitive(query, content));
     }
 }
