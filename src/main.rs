@@ -7,7 +7,7 @@ fn main() {
     Builder::new().parse_filters("debug").init();
 
     let args: Vec<String> = env::args().collect();
-    let config = Config::new(&args).unwrap_or_else(|e| {
+    let config = Config::build(&args).unwrap_or_else(|e| {
         error!("parse args: {e}");
         process::exit(1);
     });

@@ -5,7 +5,14 @@ use log::info;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.file)?;
-    for line in search(&config.query, &content) {
+
+    let result = if config.ignore_case {
+        search_case_insensitive(&config.query, &content)
+    } else {
+        search(&config.query, &content)
+    };
+
+    for line in result {
         info!("{line}");
     }
     Ok(())
@@ -14,16 +21,18 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 pub struct Config {
     pub query: String,
     pub file: String,
+    pub ignore_case: bool,
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
+    pub fn build(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
             return Err("not enough arguments");
         }
         Ok(Config {
             query: args[1].clone(),
             file: args[2].to_string(),
+            ignore_case: false,
         })
     }
 }
@@ -40,14 +49,14 @@ fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
 
 fn search_case_insensitive<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
     let mut result = vec![];
+    let query_low = query.to_lowercase();
     for line in content.lines() {
-        if line.contains(query) {
+        if line.to_lowercase().contains(&query_low) {
             result.push(line);
         }
     }
     result
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -74,6 +83,9 @@ safe, fast, productive.
 Pick three.
 Trust me.";
         println!("{}", content);
-        assert_eq!(vec!["Rust:", "Trust me."], search_case_insensitive(query, content));
+        assert_eq!(
+            vec!["Rust:", "Trust me."],
+            search_case_insensitive(query, content)
+        );
     }
 }
