@@ -25,13 +25,15 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+
+        let query = args.next().ok_or("missing arg: query")?;
+        let file = args.next().ok_or("missing arg: file")?;
+
         Ok(Config {
-            query: args[1].clone(),
-            file: args[2].to_string(),
+            query,
+            file,
             ignore_case: env::var("IGNORE_CASE").is_ok(),
         })
     }
