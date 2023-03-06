@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::fs;
+use std::{env, fs};
 
 use log::info;
 
@@ -32,7 +32,7 @@ impl Config {
         Ok(Config {
             query: args[1].clone(),
             file: args[2].to_string(),
-            ignore_case: false,
+            ignore_case: env::var("IGNORE_CASE").is_ok(),
         })
     }
 }
